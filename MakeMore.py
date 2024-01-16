@@ -355,7 +355,7 @@ for i in range(1000):
 
   # learning rate decay:
   lr = lrs[i]
-  for p in parameters:
+  for p in parameters:    # Here the C,W and b are updated based on loss
     p.data += -lr * p.grad
   
   lrei.append(lre[i])
