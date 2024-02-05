@@ -86,7 +86,7 @@ for i in range(5):
     out.append(itos[ix])
     if ix == 0:   # if the derived ix from the probability row is 0 its a `.` and word has ended
       break
-  print(''.join(itos[i] for i in out))
+  print(''.join(out))
 
 
 # Here we estimate the probaliity of the entire training set or just a made up name.
@@ -164,6 +164,22 @@ for w in words:
 X = torch.tensor(X)
 Y = torch.tensor(Y)
 
+# Check accuracy of the block appends: 
+for i in X:
+    each_block = []
+    for y in i.T:
+        each_block.append(itos[y.item()])
+    print(each_block)
+
+# New trial:
+x = [i for i in words_processed if len(i.split()) > 1]
+for irr in range(len(x)+1):
+    if x[irr] > x[irr+1]:       # If the next line is more
+        print()
+    pass
+  
+
+
 # squeezing/cramming all chars(27) through this layout of two column space(:,2)
 C = torch.randn((27,2))
 C[5]    # returns the 5th row.
@@ -228,7 +244,7 @@ b1 = torch.randn((neurons))
 # the saturated higher and lower end numbers makes backprop gradients small.
 # IF YOU DONT USE TANH YOU MIGHT HAVE NUMBERS UPWARDS/DOWNWARDS OF +/-70 AND WHEN
 # EXPONENTIATED(THE NEXT STEP) IT WILL THROW INFINITY ON +VE END AND 0 ON -VE END
-h = torch.tanh(emb.view(emb.shape[0],6) @ W1 + b1)
+h = torch.tanh(emb.view(emb.shape[0],6) @ W1 + b1)      # h for hideen layer
 # h.shape will (totals of emb.vews, total columns of W1) since this is a dot product.
 
 # final layer:
@@ -293,7 +309,7 @@ for p in parameters:
 for _ in range(10):
   # forward pass
   emb = C[X]    # embeddings are essentially inputs
-  h = torch.tanh(emb.view(emb.shape[0],inputs) @ W1 + b1)
+  h = torch.tanh(emb.view(emb.shape[0],inputs) @ W1 + b1)     # h for hidden layer
   logits = h @ W2 + b2
   # counts = logits.exp()
   # prob = counts/counts.sum(1, keepdim=True)   # Normalizing by summing each row.
@@ -321,6 +337,10 @@ for _ in range(10):
 
 # Doing minibatch forward/backward pass instead of whole batch for fast operation
     # and using non-linear learning rate
+    # This is faster yet fuzzier approach. Minibatches will create noize. 
+      # Better for fast operations to check where you stand.
+      # split the minitch to the amount of for loop iterations and og_batch_size
+        # e.g 1000/27 (In this case og_batch_size is the output class size)
 # Learning rate decay: lowering learning rate when loss starts plateu/becomes unstable.
 lre = torch.linspace(-3,0,1000)    # the Learning rate exponent. equidistant nums
 lrs = 10**lre     # neatly makes lre non-linear between 0.001 and 1
@@ -333,7 +353,8 @@ lrei,lri,lossi = [],[],[]
   # The data is split to 10 batches each batch containing 100 incremental losses 
 a = torch.tensor(lossi).reshape(10,100)
 for i in range(a.shape[0]):
-    print(torch.diff(a[i]).float().mean().item(),a[i].std())
+    slope_of_the_line = torch.diff(a[i]).float().mean().item()
+    print(slope_of_the_line, a[i].std())
 
 for i in range(1000):
   # minibatch
@@ -344,7 +365,7 @@ for i in range(1000):
   # The minibatch takes only the 32 rows of X at a time as embeddings
     # so embeddings will be (32,2,3) instead of whole (200K,2,3)
   emb = C[X[ix]]    # embeddings are essentially inputs
-  h = torch.tanh(emb.view(emb.shape[0],inputs) @ W1 + b1)
+  h = torch.tanh(emb.view(emb.shape[0],inputs) @ W1 + b1)     # h for hidden layer
   logits = h @ W2 + b2
   loss = F.cross_entropy(logits,Y[ix])
 
@@ -391,7 +412,7 @@ print(loss)
 # Training split, dev split(validation split) and finally the test split.
 
 
-# sampling from the model to extrace the generated names.
+# sampling from the model to extract the generated names.
 g = torch.Generator().manual_seed(2147483647+30)
 for _ in range(20):
   out = []
@@ -410,4 +431,4 @@ for _ in range(20):
     #   print(loss)
   print(''.join(itos[i] for i in out))
 
-# evaliat
+# evalua

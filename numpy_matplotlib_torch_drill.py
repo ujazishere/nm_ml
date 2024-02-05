@@ -80,7 +80,20 @@ np.flip(arr)
 aa=arr
 aax = aa/np.sum(aa,axis=0,keepdims=True)      # Normalize using numpy np
 aax = aa/torch.sum(torch.tensor(aa),dim=1,keepdim=True) # Normalize using torch
+# Normalize using Andrej Karparthy method
+xa = (aa - aa.mean())/torch.sqrt(aa.var()+1e-5)
 
+
+
+# Non-linear downward slope 
+# When x/= number is closer to 1 the slope is shallower.
+y = []
+x = 2
+for i in range(50):
+    x/=1.3
+    y.append(x)
+aa = [val for val in y if val<0.1 and val>0.01]
+plt.plot(aa)
 
 # ______________________________________________________________________
 # ______________________________________________________________________
