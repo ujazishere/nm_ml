@@ -101,6 +101,7 @@ plt.plot(aa)
 # Matplotlib
 import matplotlib.pyplot as plt
 
+# squeeze poins to show all data 
 arr = np.random.randint(-1,1,99)
 x_vals = range(len(arr))
 y_vals = arr

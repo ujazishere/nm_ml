@@ -23,10 +23,14 @@ words_processed = []
 for lines in words:
     list_of_words = lines.split(' ')
     # adding space at the end of each word but the last in the line
-    list_of_words = [i+' ' for i in list_of_words[:-1]] + [list_of_words[-1]]
+    list_of_words = [i+' ' for i in list_of_words[:-1]] 
+    list_of_words += [list_of_words[-1]]
     words_processed+=list_of_words
 
 """
+
+
+
 
 # This one is a permutation attempt. basic level 2
 continium=[]
@@ -60,6 +64,16 @@ stoi = {s:i+1 for i,s in enumerate(chars)}
 stoi['..'] = 0
 itos = {i:s for s,i in stoi.items()}
 output_classes = len(list(stoi.keys()))
+
+"""
+# words to their number
+words_processed = []
+for lines in trimmed_words:
+    list_of_words = lines.split(' ')
+    # adding space at the end of each word but the last in the line
+    list_of_words = [i+' ' for i in list_of_words[:-1]] + [list_of_words[-1]]
+    words_processed.append([stoi[y] for y in list_of_words])
+"""     
 
 class Make_more:
   def __init__(self, mm_block_size,
