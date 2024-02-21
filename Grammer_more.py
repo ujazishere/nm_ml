@@ -356,7 +356,6 @@ class Make_more_v2(Make_more_v1):
     print('lr', self.lr)
 
 
-  
 
 
 C = Make_more_v2(3,10,100,60,output_classes,1000)
