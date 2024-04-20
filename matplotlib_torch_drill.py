@@ -1,89 +1,31 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
 
-
 # Finding slope(trending up or down) of a tensor array
+arr = torch.rand((2,3,4))
 b = torch.randn((20))
 torch.diff(b).float().mean()
 # Checkout Makemore.py for use case: finding where learning rate
     # stagnates the losses/starts flattening after diminishing losses.
 
-# Get the column that needs to be sorted, return indexes from lowest to highest
-# then call that on the original array to sort it by that particular column
+# flip array left to right or top to bottom
+# try this for 2D array the columns gets flipped upside down.
+# arr = torch.arange(1,13,1).reshape(6,2)
+arr = torch.arange(1,13,1)
+torch.flip(arr,dims=[0])
+
+# the column that needs to be sorted passed as argument, argsort returns just sorted indexes of that particular column
 arg_sort_indexes = torch.argsort(arr[:,0])
+# that column of sorted indexes are passed in as index returns, by rows, and hence returns the whole row when passed a particular index..
+# sorting the whole array by a particular column.
 sorted_by_column = arr[arg_sort_indexes]
 
-# ___________________________________________________________
-
-# 3 lists containing 4 items. Shape of this is (2,4). matrix of 3 rows and 4 columns
-# rand() produces normal randown as compared to randn() which produces  gaussian distribution
-arr = np.random.rand(3,4) 
-
-# empty array, same as  zeros/fake_vals. First argument is the shape hence double bracs. second is dtype
-np.empty((2,3,4),dtype=float)
-
-# 3D Array of 2 lists each of those lists contains 3 items,
-    # and each of those items contains 4 items.
-    # Dimension 0 has 2 items,  dim1 has 3 items and dimension 2 has 4.
-arr = np.random.rand(2,3,4)     # numbers between 0 and 1.
-arr.size                        # total items in the array. 2 * 3 * 4. In this case 24.
-arr.ndim                        # total dimensions in the array. len(arr.shape). In this case 3 since its a 3D array.
-arr.shape                       # the shape(2,3,4).
-np.random.randint(1,5,size=(2,4))      # This one returns rand ints between(inclusive) 1 and 4 with shape 2,4
-
-arr.reshape(12,2)      # 12 rows 2 columns. arr.size should be rows*column. in this case 24
-
-# this makes a 
-    # reshape it to 2 rows and 3 columns. simply 2 times 3
-rows = 2
-columns = 3
-arr = np.arange(-1,3,0.25)      # Vector of numbers between -1 to 3 stepping by 0.25,
-# calling an index is calling the dimension of the array
-arr = arr[:(rows*columns)]      # trim the vector upto a [:i]
-arr.reshape(rows,columns)       # since there are 6 items in the vector, row*column should be 6
-
-# 30 equidistant numbers between -5 and 5. reshape it such that axis
-arr = np.linspace(-5,5,30).reshape((5,2,3))    
-# move columns to rows.
-# args esentially act as index/dimension of the array. (0,row,column) becomes (0,column,row).
-arr.transpose(0,2,1)    
-
-# find a value within an array: in this case find index of the max value
-arr = np.array([3,2,1,3,2])
-np.where(arr == np.max(arr))
-
-# return index of the maximum value.
-np.argmax(arr)
-# keeps dimensions intact:
-np.argmax(arr,axis=1,keepdims=True)
-
-x_vals = arr[:,0]         # says all rows and 0th column
-y_vals = arr[:,1]         # all rows, 1st column
-x_values, y_values = arr[:,0], arr[:,1]     # : is all rows and 0th column; 1st column
-
-# switching columns around
-arr = np.array([[1, 2], [3, 4], [5, 6]])
-arr[:, [0, 1]] = arr[:, [1, 0]]
-
-# flip array left to right:
-arr[::-1]
-np.flip(arr)
-
-# flip array upside down.
-    # take mean, subtract mean from the data
-    # then do -1 times that array that makes positive numbers -ve and -ve nums positive
--1 * (arr - np.mean(arr))
-
 # normalize
-aa=arr
-aax = aa/np.sum(aa,axis=0,keepdims=True)      # Normalize using numpy np
+aa = arr
 aax = aa/torch.sum(torch.tensor(aa),dim=1,keepdim=True) # Normalize using torch
 # Normalize using Andrej Karparthy method
 xa = (aa - aa.mean())/torch.sqrt(aa.var()+1e-5)
-
-
 
 # Non-linear downward slope 
 # When x/= number is closer to 1 the slope is shallower.
@@ -111,6 +53,19 @@ plt.scatter(x_vals,y_vals,size_of_points)
 
 plt.plot(y_vals)
 
+tx = torch.rand((2500,500))     # these can be snp500 stock prices for 10 years.
+plt.plot(tx[:,3][:2000])        # data sample of a particular ticker. 3rd column in this case and upto 2000 data points
+
+# The higher the mean the the closer this return is to zero and so for mean 1 and above the return is between 0 and 1. as the mean gets below 1..
+# the return goes above 1. The f(x) is inversly proportional to x of some sort here.
+# Use case: for varied data for too high or low scales it helps bring data close together for visualization. 
+# In the case of snp500 some data points range between 3000 and 4000 and others between 0 and 5.
+# Better use log in that case but this is also one way to do it.
+one_over_mean= 1/tx[:,3].mean().item()     
+# multiplied with the function stretches the data top to bottom.
+plt.plot(tx[:,3][:2000]**one_over_mean)       
+# Compare above with this log of data to squish it down for visibility. Do to all data and compare result.
+plt.plot(torch.log(tx[:,3][:2000]))
 # ______________________________________________________________________
 # Working animation model with matplotloib that plots 2D arrays
 # (columns are daatasets) check best_model_appl.py for use case.
@@ -166,7 +121,7 @@ def pst(y_vals):
 
 # line plotting 4 columns as datasets.
 fig,ax = plt.subplots()
-aa = np.random.randn(111,4)
+aa = torch.randn((111,4))
 
 # aax = aa/np.sum(aa,axis=0,keepdims=True)      # Normalize using numpy np
 # aax = aa/torch.sum(torch.tensor(aa),dim=1,keepdim=True) # Normalize using torch
@@ -219,7 +174,7 @@ for i in range(total_uniques):
         # initial j,i args are the x and y axis assignments. y axis goes from top to bottom unlike bottom to top
           # increments of it are like (0,0), (1,0), (2,0) ...
         plt.text(j, i, chstr, ha="center", va="bottom", color='gray')
-        plt.text(j, i, N[i, j].item(), ha="center", va="top", color='gray')
+        plt.text(j, i, N[i, j].item(), ha="center", va="top", Color='gray')
 plt.axis('off')
 plt.show()
 

@@ -1,22 +1,30 @@
-import torch.nn.functional as F
+import torch.nn.functional as f
 import torch
 import matplotlib.pyplot as plt
 from itertools import product
 import pickle
 import re
 
-# The IRS Split and generation
+# the irs split and generation
 
-# ******VVI******   Convert text to ANSI using Saveas to avoid charmap codec error
-# file = "English_grammer.txt"
-# file = "basic_eng_min2.txt"
-file = "basic_eng.txt"
-words_path = rf"C:\Users\ujasv\OneDrive\Desktop\{file}"    
-words = open(words_path, 'r').read().splitlines()   # lines
+# ******VVI******   convert text to ansi using saveas to avoid charmap codec error
 
-# this trims long items to short
-trim_upto = 10         # any lines about this amout of words will be trimmed out
-words = [i for i in words if len(i.split())<trim_upto]
+def pick(file):
+  words_path = rf"c:\users\ujasv\onedrive\desktop\{file}"    
+  return open(words_path, 'r').read().splitlines()   # lines
+
+
+# file = "english_grammer.txt"
+file = "basic_eng_min2.txt"
+# file = "basic_eng.txt"
+
+words = pick(file=file)
+
+# this trims long sentences to short
+def trim(upto:int):
+  return [i for i in words if len(i.split())<=upto]
+
+words = trim(upto=10)
 
 """
 words_processed = []
@@ -32,7 +40,7 @@ for lines in words:
 
 
 
-# This one is a permutation attempt. basic level 2
+# this one is a permutation attempt. basic level 2
 continium=[]
 for lines in words:
     list_of_words = lines.split(' ')

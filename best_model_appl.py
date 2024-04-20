@@ -275,8 +275,8 @@ for iterations in range(total_iters):
         ax.clear()  
         
         # x limit is stable so no need to set x limit since len of all rows and nth column is always same
-        ax.set_xlim(159,170)      
-        ax.set_ylim(0.3,0.6)
+        # ax.set_xlim(159,170)      
+        # ax.set_ylim(0.3,0.6)
         
         # np.hstack stacks columns next to each other
         # columns are the differnt sets of data and rows are the datapoints on y axis themselves
